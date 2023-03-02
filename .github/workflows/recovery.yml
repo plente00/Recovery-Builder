@@ -54,9 +54,13 @@ jobs:
              
        - name: Build
          run: |
-              cd work
-              . build/envsetup.sh &&lunch omni_$DEVICE-eng &&export ALLOW_MISSING_DEPENDENCIES=true && mka $TARGET
-             
+           source build/envsetup.sh
+           export ALLOW_MISSING_DEPENDENCIES=true
+           lunch ${{ github.event.inputs.twrp_bahamut }}-eng && make clean && make ${{ github.event.inputs.recovery }}image -j$(nproc --all)
+         working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+
+              
+  
        - name: Release recovery image
          uses: softprops/action-gh-release@v1
          env:
@@ -65,4 +69,4 @@ jobs:
           tag_name: TWRP_12.1
           name: TWRP-bahamut
           files: | 
-            work/out/target/product/KD7/recovery.img
+            work/out/target/product/bahamut/recovery.img
